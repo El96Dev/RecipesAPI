@@ -21,3 +21,13 @@ class Recipy(RecipyBase):
 
 class RecipyCreate(RecipyBase):
     pass
+
+
+class RecipyUpdate(RecipyBase):
+    pass
+
+
+class RecipyUpdatePartial(RecipyBase):
+    name: str | None = None
+    author: str | None = None
+    text: str | None = None

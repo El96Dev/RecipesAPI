@@ -2,7 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.engine import result
 from core.models.recipy import Recipy
-from .schemas import RecipyCreate
+from .schemas import RecipyCreate, RecipyUpdate, RecipyUpdatePartial
 
 
 async def get_recipes(session: AsyncSession):
@@ -21,3 +21,16 @@ async def create_recipy(session: AsyncSession, recipy_in: RecipyCreate):
     session.add(recipy)
     await session.commit()
     return recipy
+
+
+async def update_recipy(session: AsyncSession, recipy: Recipy, 
+                        recipy_update: RecipyUpdate | RecipyUpdatePartial, partial: bool = False):
+    for key, value in recipy_update.model_dump(exclude_unset=partial).items():
+        setattr(recipy, key, value)
+    await session.commit()
+    return recipy
+
+
+async def delete_product(session: AsyncSession, recipy: Recipy):
+    await session.delete(recipy)
+    await session.commit()
