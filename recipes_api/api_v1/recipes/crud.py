@@ -31,6 +31,6 @@ async def update_recipy(session: AsyncSession, recipy: Recipy,
     return recipy
 
 
-async def delete_product(session: AsyncSession, recipy: Recipy):
+async def delete_recipy(session: AsyncSession, recipy: Recipy):
     await session.delete(recipy)
     await session.commit()

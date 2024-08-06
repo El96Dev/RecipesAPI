@@ -50,6 +50,6 @@ async def update_recipy_partial(
     )
 
 
-@router.delete("/{recipy_id}")
+@router.delete("/{recipy_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_recipy(recipy: Recipy = Depends(recipy_by_id), session: AsyncSession = Depends(db_helper.scoped_session_dependency)):
-    pass
+    await crud.delete_recipy(session=session, recipy=recipy)
