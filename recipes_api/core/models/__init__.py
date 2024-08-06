@@ -7,4 +7,4 @@ __all__ = (
 
 from .base import Base
 from .db_helper import DatabaseHelper, db_helper
-from .category import Category
+from .recipy import Category
