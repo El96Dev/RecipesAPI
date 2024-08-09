@@ -3,12 +3,13 @@ __all__ = (
     "DatabaseHelper",
     "db_helper",
     "Categroy",
-    "Product",
     "Recipy",
-    "User"
+    "User",
+    "AccessToken"
 )
 
 from .base import Base
 from .db_helper import DatabaseHelper, db_helper
-from .recipy import Category, Product, Recipy
-from .users import User
+from .recipy import Category, Recipy
+from .user import User
+from .access_token import AccessToken

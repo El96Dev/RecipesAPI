@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.engine import result
-from core.models.recipy import Recipy
+from core.models.recipy import Recipy, Category
 from .schemas import RecipyCreate, RecipyUpdate, RecipyUpdatePartial
 
 
@@ -13,7 +13,15 @@ async def get_recipes(session: AsyncSession):
 
 
 async def get_recipy(session: AsyncSession, recipy_id: int):
+    print("get recipy ", recipy_id)
     return await session.get(Recipy, recipy_id)
+
+
+async def get_categories(session: AsyncSession):
+    stmt = select(Category)
+    result = await session.execute(stmt)
+    categories = result.scalars().all()
+    return list(categories)
 
 
 async def create_recipy(session: AsyncSession, recipy_in: RecipyCreate):

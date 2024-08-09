@@ -1,10 +1,8 @@
 from pydantic import BaseModel, ConfigDict
 
+
 class Category(BaseModel):
-    name: str
-
-
-class Product(BaseModel):
+    id: int
     name: str
 
 
@@ -12,6 +10,7 @@ class RecipyBase(BaseModel):
     name: str
     author: str
     text: str
+    category: str 
 
 
 class Recipy(RecipyBase):
@@ -31,3 +30,4 @@ class RecipyUpdatePartial(RecipyBase):
     name: str | None = None
     author: str | None = None
     text: str | None = None
+    category: str | None = None
