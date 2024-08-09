@@ -27,8 +27,9 @@ async def get_recipy(recipy: Recipy = Depends(recipy_by_id)):
 
 
 @router.post("/create_recipy", response_model=Recipy, status_code=status.HTTP_201_CREATED)
-async def create_recipy(recipy_in: RecipyCreate, session: AsyncSession = Depends(db_helper.scoped_session_dependency)):
-    return await crud.create_recipy(session=session, recipy_in=recipy_in)
+async def create_recipy(recipy_in: RecipyCreate, session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+                        user: User = Depends(current_active_user)):
+    return await crud.create_recipy(session=session, recipy_in=recipy_in, author = user.email)
 
 
 @router.put("/{recipy_id}", response_model=Recipy)

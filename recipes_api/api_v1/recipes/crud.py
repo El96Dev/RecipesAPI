@@ -24,8 +24,8 @@ async def get_categories(session: AsyncSession):
     return list(categories)
 
 
-async def create_recipy(session: AsyncSession, recipy_in: RecipyCreate):
-    recipy = Recipy(**recipy_in.model_dump())
+async def create_recipy(session: AsyncSession, recipy_in: RecipyCreate, author: str):
+    recipy = Recipy(**recipy_in.model_dump(), author=author)
     session.add(recipy)
     await session.commit()
     return recipy

@@ -8,7 +8,6 @@ class Category(BaseModel):
 
 class RecipyBase(BaseModel):
     name: str
-    author: str
     text: str
     category: str 
 
@@ -16,6 +15,7 @@ class RecipyBase(BaseModel):
 class Recipy(RecipyBase):
     model_config = ConfigDict(from_attributes=True)
     id: int
+    author: str
 
 
 class RecipyCreate(RecipyBase):
