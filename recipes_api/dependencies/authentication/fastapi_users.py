@@ -8,3 +8,5 @@ from .backend import authentication_backend
 fastapi_users = FastAPIUsers[User, UserIdType](
     get_user_manager, [authentication_backend]
 )
+
+current_active_user = fastapi_users.current_user(active=True)

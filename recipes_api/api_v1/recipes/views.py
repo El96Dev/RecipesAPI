@@ -4,6 +4,8 @@ from . import crud
 from .schemas import Recipy, RecipyCreate, RecipyUpdate, RecipyUpdatePartial, Category
 from .dependencies import recipy_by_id
 from core.models import db_helper
+from core.models import User
+from dependencies.authentication.fastapi_users import current_active_user
 
 
 router = APIRouter(tags=["Recipes"])
@@ -14,7 +16,8 @@ async def get_recipes(session: AsyncSession = Depends(db_helper.scoped_session_d
 
 
 @router.get("/create_recipy", response_model=list[Category])
-async def get_recipy_categories(session: AsyncSession = Depends(db_helper.scoped_session_dependency)):
+async def get_recipy_categories(session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+                                user: User = Depends(current_active_user)):
     return await crud.get_categories(session=session)
 
 
