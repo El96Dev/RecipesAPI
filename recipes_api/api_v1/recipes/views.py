@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from . import crud 
-from .schemas import Recipy, RecipyCreate, RecipyUpdate, RecipyUpdatePartial, Category
+from .schemas import Recipy, RecipyCreate, RecipyUpdate, RecipyUpdatePartial, Category, Like
 from .dependencies import recipy_by_id, get_recipy_if_user_is_author
 from core.models import db_helper
 from core.models import User
@@ -74,3 +74,24 @@ async def delete_recipy(recipy_id: int,
                         user: User = Depends(current_active_user)):
     recipy = await get_recipy_if_user_is_author(recipy_id=recipy_id, author=user.email, session=session)
     await crud.delete_recipy(session=session, recipy=recipy)
+
+
+@router.post("/{recipy_id}/like", response_model=Like, status_code=status.HTTP_201_CREATED)
+async def add_like(recipy_id: int, 
+                   user: User = Depends(current_active_user), 
+                   session: AsyncSession = Depends(db_helper.scoped_session_dependency)):
+    if await crud.check_if_like_exists(session=session, user_id=user.id, recipy_id=recipy_id):
+        raise HTTPException(status_code=403, detail="Like already exists!")
+    elif not await crud.check_if_recipy_exists(session=session, recipy_id=recipy_id):
+        raise HTTPException(status_code=404, detail=f"Recipe with id {recipy_id} doesn't exist!")
+    return await crud.add_like(session=session, user_id=user.id, recipy_id=recipy_id)
+
+
+@router.delete("/{recipy_id}/like", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_like(recipy_id: int,
+                      user: User = Depends(current_active_user),
+                      session: AsyncSession = Depends(db_helper.scoped_session_dependency)):
+    if not await crud.check_if_like_exists(session=session, user_id=user.id, recipy_id=recipy_id):
+        raise HTTPException(status_code=404, detail="Like doesn't exits!")
+    like = await crud.get_like(session=session, user_id=user.id, recipy_id=recipy_id)
+    return await crud.remove_like(session=session, like=like)

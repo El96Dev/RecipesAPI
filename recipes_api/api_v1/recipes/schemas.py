@@ -30,3 +30,9 @@ class RecipyUpdatePartial(RecipyBase):
     name: str | None = None
     text: str | None = None
     category: str | None = None
+
+
+class Like(BaseModel):
+    id: int
+    user_id: int
+    recipy_id: int
