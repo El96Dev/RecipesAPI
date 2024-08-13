@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.engine import result
@@ -47,6 +48,14 @@ async def create_recipy(session: AsyncSession, recipy_in: RecipyCreate, author: 
 async def update_recipy(session: AsyncSession, recipy: Recipy, 
                         recipy_update: RecipyUpdate | RecipyUpdatePartial, author: str,
                         partial: bool = False):
+    db_recipy = await session.get(Recipy, recipy.id)
+    if not db_recipy:
+        raise HTTPException(status_code=404, detail=f"Recipy {recipy.name} doesn't exist!")
+    elif db_recipy.author != author:
+        raise HTTPException(status_code=403, detail="Only author can update recipy!")
+    if not await check_category_exists(session, recipy_update.category):
+        raise HTTPException(status_code=404, detail=f"Category {recipy_update.category} doesn't exist!")
+
     for key, value in recipy_update.model_dump(exclude_unset=partial).items():
         setattr(recipy, key, value)
     await session.commit()
@@ -57,3 +66,7 @@ async def delete_recipy(session: AsyncSession, recipy: Recipy):
     await session.delete(recipy)
     await session.commit()
 
+
+async def check_category_exists(session: AsyncSession, category_name: str):
+    query = select(Category).where(Category.name==category_name).exists()
+    return await session.scalar(select(query))

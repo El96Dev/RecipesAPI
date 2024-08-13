@@ -29,7 +29,7 @@ async def get_recipy(recipy: Recipy = Depends(recipy_by_id)):
 @router.post("/create_recipy", response_model=Recipy, status_code=status.HTTP_201_CREATED)
 async def create_recipy(recipy_in: RecipyCreate, session: AsyncSession = Depends(db_helper.scoped_session_dependency),
                         user: User = Depends(current_active_user)):
-    if not await crud.get_category(session=session, category_name=recipy_in.category):
+    if not await crud.check_category_exists(session, recipy_in.category):
         raise HTTPException(status_code=422, detail=f"Category {recipy_in.category} doesn't exist!")
     if await crud.get_recipy_by_name_and_author(session=session, recipy_name=recipy_in.name, author=user.email):
         raise HTTPException(status_code=403, detail=f"Recipy {recipy_in.name} already exists!")
@@ -42,8 +42,8 @@ async def update_recipy(
     recipy_update: RecipyUpdate,
     recipy: Recipy = Depends(recipy_by_id), 
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
-    user: User = Depends(current_active_user)
-):
+    user: User = Depends(current_active_user)):
+
     return await crud.update_recipy(
         session=session,
         recipy=recipy,
@@ -56,12 +56,14 @@ async def update_recipy(
 async def update_recipy_partial(
     recipy_update: RecipyUpdatePartial,
     recipy: Recipy = Depends(recipy_by_id), 
-    session: AsyncSession = Depends(db_helper.scoped_session_dependency)
-):
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+    user: User = Depends(current_active_user)):
+
     return await crud.update_recipy(
         session=session,
         recipy=recipy,
         recipy_update=recipy_update,
+        author=user.email,
         partial=True
     )
 

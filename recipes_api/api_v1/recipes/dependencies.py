@@ -25,7 +25,7 @@ async def get_recipy_if_user_is_author(recipy_id: Annotated[int, Path],
         if recipy.author == author:
             return recipy
         else:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only author can delete recipy!")
     else:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
