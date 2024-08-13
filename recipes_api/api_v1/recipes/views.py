@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from . import crud 
 from .schemas import Recipy, RecipyCreate, RecipyUpdate, RecipyUpdatePartial, Category
-from .dependencies import recipy_by_id
+from .dependencies import recipy_by_id, get_recipy_if_user_is_author
 from core.models import db_helper
 from core.models import User
 from dependencies.authentication.fastapi_users import current_active_user
@@ -29,19 +29,26 @@ async def get_recipy(recipy: Recipy = Depends(recipy_by_id)):
 @router.post("/create_recipy", response_model=Recipy, status_code=status.HTTP_201_CREATED)
 async def create_recipy(recipy_in: RecipyCreate, session: AsyncSession = Depends(db_helper.scoped_session_dependency),
                         user: User = Depends(current_active_user)):
-    return await crud.create_recipy(session=session, recipy_in=recipy_in, author = user.email)
+    if not await crud.get_category(session=session, category_name=recipy_in.category):
+        raise HTTPException(status_code=422, detail=f"Category {recipy_in.category} doesn't exist!")
+    if await crud.get_recipy_by_name_and_author(session=session, recipy_name=recipy_in.name, author=user.email):
+        raise HTTPException(status_code=403, detail=f"Recipy {recipy_in.name} already exists!")
+    else:
+        return await crud.create_recipy(session=session, recipy_in=recipy_in, author = user.email)
 
 
 @router.put("/{recipy_id}", response_model=Recipy)
 async def update_recipy(
     recipy_update: RecipyUpdate,
     recipy: Recipy = Depends(recipy_by_id), 
-    session: AsyncSession = Depends(db_helper.scoped_session_dependency)
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+    user: User = Depends(current_active_user)
 ):
     return await crud.update_recipy(
         session=session,
         recipy=recipy,
-        recipy_update=recipy_update
+        recipy_update=recipy_update,
+        author=user.email
     )
 
 
@@ -60,5 +67,8 @@ async def update_recipy_partial(
 
 
 @router.delete("/{recipy_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_recipy(recipy: Recipy = Depends(recipy_by_id), session: AsyncSession = Depends(db_helper.scoped_session_dependency)):
+async def delete_recipy(recipy_id: int, 
+                        session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+                        user: User = Depends(current_active_user)):
+    recipy = await get_recipy_if_user_is_author(recipy_id=recipy_id, author=user.email, session=session)
     await crud.delete_recipy(session=session, recipy=recipy)

@@ -12,8 +12,21 @@ async def get_recipes(session: AsyncSession):
     return list(recipes)
 
 
+async def get_recipy_by_name_and_author(session: AsyncSession, recipy_name: str, author: str):
+    stmt = select(Recipy).where(Recipy.name == recipy_name, Recipy.author == author)
+    result = await session.execute(stmt)
+    recipy = result.scalars().all()
+    return recipy
+
+
+async def get_category(session: AsyncSession, category_name: str):
+    stmt = select(Category).where(Category.name == category_name)
+    result = await session.execute(stmt)
+    category = result.scalars().all()
+    return category
+
+
 async def get_recipy(session: AsyncSession, recipy_id: int):
-    print("get recipy ", recipy_id)
     return await session.get(Recipy, recipy_id)
 
 
@@ -32,7 +45,8 @@ async def create_recipy(session: AsyncSession, recipy_in: RecipyCreate, author: 
 
 
 async def update_recipy(session: AsyncSession, recipy: Recipy, 
-                        recipy_update: RecipyUpdate | RecipyUpdatePartial, partial: bool = False):
+                        recipy_update: RecipyUpdate | RecipyUpdatePartial, author: str,
+                        partial: bool = False):
     for key, value in recipy_update.model_dump(exclude_unset=partial).items():
         setattr(recipy, key, value)
     await session.commit()
@@ -42,3 +56,4 @@ async def update_recipy(session: AsyncSession, recipy: Recipy,
 async def delete_recipy(session: AsyncSession, recipy: Recipy):
     await session.delete(recipy)
     await session.commit()
+

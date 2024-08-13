@@ -28,6 +28,5 @@ class RecipyUpdate(RecipyBase):
 
 class RecipyUpdatePartial(RecipyBase):
     name: str | None = None
-    author: str | None = None
     text: str | None = None
     category: str | None = None
