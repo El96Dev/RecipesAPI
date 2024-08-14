@@ -104,8 +104,3 @@ async def get_like(session: AsyncSession, user_id: int, recipy_id: int):
     return like
 
 
-async def get_user_likes(session: AsyncSession, user_id: int):
-    stmt = select(User).options(selectinload(User.likes)).where(User.id==user_id)
-    result = await session.execute(stmt)
-    user = result.scalars().one_or_none()
-    return user.likes

@@ -97,8 +97,3 @@ async def delete_like(recipy_id: int,
     return await crud.remove_like(session=session, like=like)
 
 
-# DEBUG, DELETE LATER!
-@router.get("/{user_id}/likes")
-async def get_user_likes(user_id: int, 
-                         session: AsyncSession = Depends(db_helper.scoped_session_dependency)):
-    return await crud.get_user_likes(session, user_id)
