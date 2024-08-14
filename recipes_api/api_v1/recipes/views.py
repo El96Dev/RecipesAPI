@@ -76,7 +76,7 @@ async def delete_recipy(recipy_id: int,
     await crud.delete_recipy(session=session, recipy=recipy)
 
 
-@router.post("/{recipy_id}/like", response_model=Like, status_code=status.HTTP_201_CREATED)
+@router.post("/{recipy_id}/like", status_code=status.HTTP_201_CREATED)
 async def add_like(recipy_id: int, 
                    user: User = Depends(current_active_user), 
                    session: AsyncSession = Depends(db_helper.scoped_session_dependency)):
@@ -95,3 +95,10 @@ async def delete_like(recipy_id: int,
         raise HTTPException(status_code=404, detail="Like doesn't exits!")
     like = await crud.get_like(session=session, user_id=user.id, recipy_id=recipy_id)
     return await crud.remove_like(session=session, like=like)
+
+
+# DEBUG, DELETE LATER!
+@router.get("/{user_id}/likes")
+async def get_user_likes(user_id: int, 
+                         session: AsyncSession = Depends(db_helper.scoped_session_dependency)):
+    return await crud.get_user_likes(session, user_id)

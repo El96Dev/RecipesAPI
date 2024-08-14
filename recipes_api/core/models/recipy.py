@@ -19,3 +19,4 @@ class Recipy(Base, IdPkMixin):
     author: Mapped[str] = mapped_column(ForeignKey("users.email"))
     text: Mapped[str]
     category: Mapped[str] = mapped_column(ForeignKey("categories.name"))
+    likes: Mapped[list["User"]] = relationship("User", secondary="likes", back_populates="likes", uselist=True)

@@ -1,8 +1,10 @@
 from fastapi import HTTPException
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload, joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.engine import result
 from core.models.recipy import Recipy, Category
+from core.models.user import User
 from core.models.like import Like
 from .schemas import RecipyCreate, RecipyUpdate, RecipyUpdatePartial
 
@@ -77,9 +79,11 @@ async def check_if_like_exists(session: AsyncSession, user_id: int, recipy_id: i
     query = select(Like).where(Like.user_id==user_id, Like.recipy_id==recipy_id).exists()
     return await session.scalar(select(query))
 
+
 async def check_if_recipy_exists(session: AsyncSession, recipy_id: int):
     query = select(Recipy).where(Recipy.id==recipy_id).exists()
     return await session.scalar(select(query))
+
 
 async def add_like(session: AsyncSession, user_id: int, recipy_id: int):
     like = Like(user_id=user_id, recipy_id=recipy_id)
@@ -98,3 +102,10 @@ async def get_like(session: AsyncSession, user_id: int, recipy_id: int):
     result = await session.execute(stmt)
     like = result.scalars().one_or_none()
     return like
+
+
+async def get_user_likes(session: AsyncSession, user_id: int):
+    stmt = select(User).options(selectinload(User.likes)).where(User.id==user_id)
+    result = await session.execute(stmt)
+    user = result.scalars().one_or_none()
+    return user.likes
