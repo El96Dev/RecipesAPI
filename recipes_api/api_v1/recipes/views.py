@@ -15,6 +15,12 @@ async def get_recipes(session: AsyncSession = Depends(db_helper.scoped_session_d
     return await crud.get_recipes(session=session)
 
 
+@router.get("/{category_name}", response_model=list[Recipy])
+async def get_recipes_by_category(category_name: str,
+                                  session: AsyncSession = Depends(db_helper.scoped_session_dependency)):
+    return await crud.get_recipes_by_category(session=session, category_name=category_name)
+
+
 @router.get("/create_recipy", response_model=list[Category])
 async def get_recipy_categories(session: AsyncSession = Depends(db_helper.scoped_session_dependency),
                                 user: User = Depends(current_active_user)):

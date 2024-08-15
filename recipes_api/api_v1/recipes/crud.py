@@ -16,6 +16,16 @@ async def get_recipes(session: AsyncSession):
     return list(recipes)
 
 
+async def get_recipes_by_category(session: AsyncSession, category_name: str):
+    if not await check_category_exists(session, category_name):
+        raise HTTPException(status_code=404, detail=f"Category {category_name} doesn't exist!")    
+
+    stmt = select(Recipy).where(Recipy.category==category_name)
+    result = await session.execute(stmt)
+    recipes = result.scalars().all()
+    return list(recipes)
+
+
 async def get_recipy_by_name_and_author(session: AsyncSession, recipy_name: str, author: str):
     stmt = select(Recipy).where(Recipy.name == recipy_name, Recipy.author == author)
     result = await session.execute(stmt)
