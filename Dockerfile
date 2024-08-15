@@ -25,7 +25,11 @@ COPY ./recipes_api /code/recipes_api
 
 WORKDIR /code/recipes_api
 
+#
+
+CMD ["bash", "runscript.sh"]
+
 
 #
 
-CMD ["python3", "main.py"]
+#CMD ["python3", "main.py"]
