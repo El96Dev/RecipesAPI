@@ -69,8 +69,15 @@ async def stop_following_user(session: AsyncSession, user: User, user_id: int):
     await session.commit()
 
 
-# async def get_user_followings(session: AsyncSession, user_id: int):
-#     stmt = select(User).options(selectinload(User.following)).where(User.id==user_id)
-#     result = await session.execute(stmt)
-#     user = result.scalars().one_or_none()
-#     return user.likes
+async def get_user_followings(session: AsyncSession, user_id: int):
+    stmt = select(User).options(selectinload(User.following)).where(User.id==user_id)
+    result = await session.execute(stmt)
+    user = result.scalars().one_or_none()
+    return user.following
+
+
+async def get_user_followers(session: AsyncSession, user_id: int):
+    stmt = select(User).options(selectinload(User.followers)).where(User.id==user_id)
+    result = await session.execute(stmt)
+    user = result.scalars().one_or_none()
+    return user.followers

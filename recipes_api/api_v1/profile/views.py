@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from . import crud 
+from .schemas import Follower, Following
 from core.models import db_helper
 from core.models import User
 from dependencies.authentication.fastapi_users import current_active_user
@@ -35,8 +36,15 @@ async def stop_following_user(user_id: int,
     return await crud.stop_following_user(session, user, user_id)
 
 
-# @router.get("/{user_id}/followings")
-# async def get_user_followers(user_id: int,
-#                              user: User = Depends(current_active_user),
-#                              session: AsyncSession = Depends(db_helper.scoped_session_dependency)):
-#     return await crud.get_user_followings(session, user_id)
+@router.get("/{user_id}/followings", response_model=list[Following])
+async def get_user_followings(user_id: int,
+                              user: User = Depends(current_active_user),
+                              session: AsyncSession = Depends(db_helper.scoped_session_dependency)):
+    return await crud.get_user_followings(session, user_id)
+
+
+@router.get("/{user_id}/followers", response_model=list[Follower])
+async def get_user_followers(user_id: int,
+                             user: User = Depends(current_active_user),
+                             session: AsyncSession = Depends(db_helper.scoped_session_dependency)):
+    return await crud.get_user_followers(session, user_id)

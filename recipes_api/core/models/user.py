@@ -17,6 +17,11 @@ class User(Base, SQLAlchemyBaseUserTable[UserIdType]):
                              primaryjoin=("followings.c.user_id==User.id"),
                              secondaryjoin=("followings.c.following_id==User.id"))
 
+    followers = relationship("User", secondary="followings", 
+                             primaryjoin=("followings.c.following_id==User.id"),
+                             secondaryjoin=("followings.c.user_id==User.id"))
+
+
     @classmethod
     def get_db(cls, session: "AsyncSession"):
         return SQLAlchemyUserDatabase(session, User)
