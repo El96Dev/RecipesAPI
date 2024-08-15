@@ -13,6 +13,9 @@ class User(Base, SQLAlchemyBaseUserTable[UserIdType]):
 
     id: Mapped[UserIdType] = mapped_column(primary_key=True)
     likes: Mapped[list["Recipy"]] = relationship("Recipy", secondary="likes", back_populates="likes", uselist=True)
+    following = relationship("User", secondary="followings", 
+                             primaryjoin=("followings.c.user_id==User.id"),
+                             secondaryjoin=("followings.c.following_id==User.id"))
 
     @classmethod
     def get_db(cls, session: "AsyncSession"):

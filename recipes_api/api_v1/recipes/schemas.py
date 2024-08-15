@@ -2,7 +2,7 @@ from pydantic import BaseModel, ConfigDict
 
 
 class Category(BaseModel):
-    id: int
+    # id: int
     name: str
 
 

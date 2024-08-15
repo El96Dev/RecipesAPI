@@ -6,7 +6,8 @@ __all__ = (
     "Recipy",
     "User",
     "AccessToken",
-    "Like"
+    "Like",
+    "Following"
 )
 
 from .base import Base
@@ -15,3 +16,4 @@ from .recipy import Category, Recipy
 from .user import User
 from .access_token import AccessToken
 from .like import Like
+from .following import Following
