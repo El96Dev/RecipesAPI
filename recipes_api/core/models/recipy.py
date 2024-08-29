@@ -10,12 +10,12 @@ if TYPE_CHECKING:
 
 class Category(Base, IdPkMixin):
     __tablename__ = "categories"
-    name: Mapped[str]
+    name: Mapped[str] = mapped_column(unique=True)
 
 
 class Recipy(Base, IdPkMixin):
     __tablename__ = "recipes"
-    name: Mapped[str]
+    name: Mapped[str] 
     author: Mapped[str] = mapped_column(ForeignKey("users.email"))
     text: Mapped[str]
     category: Mapped[str] = mapped_column(ForeignKey("categories.name"))

@@ -7,4 +7,3 @@ class Base(DeclarativeBase):
     def __tablename__(self):
         return f"{self.__name__.lower()}s"
 
-    # id: Mapped[int] = mapped_column(primary_key=True)

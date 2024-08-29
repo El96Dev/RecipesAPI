@@ -14,7 +14,8 @@ class AccessToken(BaseModel):
 class Settings(BaseSettings):
     api_v1_prefix: str = "/api/v1"
 
-    db_url: str = "sqlite+aiosqlite:///./db_sqlite3"
+    # db_url: str = "sqlite+aiosqlite:///./db_sqlite3"
+    db_url: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/recipes"
     db_echo: bool = True
     access_token: AccessToken = AccessToken()
 
