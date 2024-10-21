@@ -3,6 +3,7 @@ __all__ = (
     "DatabaseHelper",
     "db_helper",
     "Categroy",
+    "Cuisine",
     "Recipy",
     "User",
     "AccessToken",
@@ -13,7 +14,7 @@ __all__ = (
 
 from .base import Base
 from .db_helper import DatabaseHelper, db_helper
-from .recipy import Category, Recipy
+from .recipy import Category, Cuisine, Recipy
 from .user import User
 from .access_token import AccessToken
 from .like import Like
