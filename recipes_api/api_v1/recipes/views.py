@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from . import crud 
-from .schemas import Recipy, RecipyCreate, RecipyUpdate, RecipyUpdatePartial, Category, Like
+from .schemas import Recipy, RecipyCreate, RecipyUpdate, RecipyUpdatePartial, Cuisine, Category
 from .dependencies import recipy_by_id, get_recipy_if_user_is_author
 from core.models import db_helper
 from core.models import User
@@ -15,10 +15,16 @@ async def get_recipes(session: AsyncSession = Depends(db_helper.scoped_session_d
     return await crud.get_recipes(session=session)
 
 
-@router.get("/{category_name}", response_model=list[Recipy])
-async def get_recipes_by_category(category_name: str,
-                                  session: AsyncSession = Depends(db_helper.scoped_session_dependency)):
-    return await crud.get_recipes_by_category(session=session, category_name=category_name)
+@router.get("/categories")
+async def get_categories(session: AsyncSession = Depends(db_helper.scoped_session_dependency)):
+    categories = await crud.get_categories(session)
+    return categories
+
+
+@router.get("/cuisines", response_model=list[Cuisine])
+async def get_cuisines(session: AsyncSession = Depends(db_helper.scoped_session_dependency)):
+    cuisines = await crud.get_cuisines(session)
+    return cuisines
 
 
 @router.get("/create_recipy", response_model=list[Category])

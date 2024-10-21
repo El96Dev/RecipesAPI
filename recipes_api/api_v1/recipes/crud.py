@@ -3,7 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload, joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.engine import result
-from core.models.recipy import Recipy, Category
+from core.models.recipy import Recipy, Category, Cuisine
 from core.models.user import User
 from core.models.like import Like
 from .schemas import RecipyCreate, RecipyUpdate, RecipyUpdatePartial
@@ -49,6 +49,13 @@ async def get_categories(session: AsyncSession):
     result = await session.execute(stmt)
     categories = result.scalars().all()
     return list(categories)
+
+
+async def get_cuisines(session: AsyncSession):
+    stmt = select(Cuisine)
+    result = await session.execute(stmt)
+    cuisines = result.scalars().all()
+    return list(cuisines)
 
 
 async def create_recipy(session: AsyncSession, recipy_in: RecipyCreate, author: str):

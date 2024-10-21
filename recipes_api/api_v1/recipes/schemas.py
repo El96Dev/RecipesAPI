@@ -1,14 +1,22 @@
 from pydantic import BaseModel, ConfigDict
 
 
-class Category(BaseModel):
-    name: str
-
 
 class RecipyBase(BaseModel):
     name: str
     text: str
     category: str 
+    cuisine: str
+
+
+class Cuisine(BaseModel):
+    id: int
+    name: str
+
+
+class Category(BaseModel):
+    id: int
+    name: str
 
 
 class Recipy(RecipyBase):
