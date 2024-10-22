@@ -19,7 +19,7 @@ async def get_recipes(session: AsyncSession):
 async def get_recipes_by_category(session: AsyncSession, category_name: str):
     if not await check_category_exists(session, category_name):
         raise HTTPException(status_code=404, detail=f"Category {category_name} doesn't exist!")    
-
+    
     stmt = select(Recipy).where(Recipy.category==category_name)
     result = await session.execute(stmt)
     recipes = result.scalars().all()
@@ -87,6 +87,11 @@ async def delete_recipy(session: AsyncSession, recipy: Recipy):
     await session.commit()
 
 
+async def check_cuisine_exists(session: AsyncSession, cuisine_name: str):
+    query = select(Cuisine).where(Cuisine.name==cuisine_name).exists()
+    return await session.scalar(select(query))
+
+
 async def check_category_exists(session: AsyncSession, category_name: str):
     query = select(Category).where(Category.name==category_name).exists()
     return await session.scalar(select(query))
@@ -120,4 +125,10 @@ async def get_like(session: AsyncSession, user_id: int, recipy_id: int):
     like = result.scalars().one_or_none()
     return like
 
+
+async def get_recipy_likes(recipy_id: int, session: AsyncSession):
+    stmt = select(Recipy).where(Recipy.id==recipy_id).options(joinedload(Recipy.likes)).load_only(Recipy.name)
+    result = await session.execute(stmt)
+    likes = result.scalars().all()
+    return likes
 

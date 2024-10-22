@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from . import crud 
-from .schemas import Recipy, RecipyCreate, RecipyUpdate, RecipyUpdatePartial, Cuisine, Category
+from .schemas import Recipy, RecipyCreate, RecipyUpdate, RecipyUpdatePartial, Cuisine, Category, Like
 from .dependencies import recipy_by_id, get_recipy_if_user_is_author
 from core.models import db_helper
 from core.models import User
@@ -27,20 +27,16 @@ async def get_cuisines(session: AsyncSession = Depends(db_helper.scoped_session_
     return cuisines
 
 
-@router.get("/create_recipy", response_model=list[Category])
-async def get_recipy_categories(session: AsyncSession = Depends(db_helper.scoped_session_dependency),
-                                user: User = Depends(current_active_user)):
-    return await crud.get_categories(session=session)
-
-
 @router.get("/{recipy_id}", response_model=Recipy)
 async def get_recipy(recipy: Recipy = Depends(recipy_by_id)):
     return recipy 
 
 
-@router.post("/create_recipy", response_model=Recipy, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=Recipy, status_code=status.HTTP_201_CREATED)
 async def create_recipy(recipy_in: RecipyCreate, session: AsyncSession = Depends(db_helper.scoped_session_dependency),
                         user: User = Depends(current_active_user)):
+    if not await crud.check_cuisine_exists(session, recipy_in.cuisine):
+        raise HTTPException(status_code=422, detail=f"Cuisine {recipy_in.cuisine} doesn't exist!")
     if not await crud.check_category_exists(session, recipy_in.category):
         raise HTTPException(status_code=422, detail=f"Category {recipy_in.category} doesn't exist!")
     if await crud.get_recipy_by_name_and_author(session=session, recipy_name=recipy_in.name, author=user.email):
@@ -88,7 +84,13 @@ async def delete_recipy(recipy_id: int,
     await crud.delete_recipy(session=session, recipy=recipy)
 
 
-@router.post("/{recipy_id}/like", status_code=status.HTTP_201_CREATED)
+@router.get("/{recipy_id}/likes", response_model=list[Like])
+async def get_recipy_likes(recipy_id: int,
+                           session: AsyncSession = Depends(db_helper.scoped_session_dependency)):
+    return await crud.get_recipy_likes(recipy_id, session)
+
+
+@router.post("/{recipy_id}/likes", status_code=status.HTTP_201_CREATED)
 async def add_like(recipy_id: int, 
                    user: User = Depends(current_active_user), 
                    session: AsyncSession = Depends(db_helper.scoped_session_dependency)):
@@ -99,7 +101,7 @@ async def add_like(recipy_id: int,
     return await crud.add_like(session=session, user_id=user.id, recipy_id=recipy_id)
 
 
-@router.delete("/{recipy_id}/like", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{recipy_id}/likes", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_like(recipy_id: int,
                       user: User = Depends(current_active_user),
                       session: AsyncSession = Depends(db_helper.scoped_session_dependency)):
