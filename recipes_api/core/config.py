@@ -14,6 +14,8 @@ class AccessToken(BaseModel):
 class Settings(BaseSettings):
     api_v1_prefix: str = "/api/v1"
 
+    origins: list[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
+
     # db_url: str = "sqlite+aiosqlite:///./db_sqlite3"
     db_url: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/recipes"
     db_echo: bool = True
