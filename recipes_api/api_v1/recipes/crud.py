@@ -9,6 +9,7 @@ from core.models.recipy import Recipy, Category, Cuisine
 from core.models.user import User
 from core.models.like import Like
 from .schemas import RecipyCreate, RecipyUpdate, RecipyUpdatePartial
+from dependencies.images import image_helper
 
 
 async def get_recipes(session: AsyncSession):
@@ -147,27 +148,17 @@ async def set_recipy_image(recipy_id: int, recipy_image: UploadFile, user: User,
     if recipy.author != user.email:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only author can set recipy image!")
 
-    recipy_image.file.seek(0, 2)  
-    file_size_bytes = recipy_image.file.tell() 
-    recipy_image.file.seek(0)
-    if file_size_bytes/(1024) > 150:
+    if not image_helper.check_image_size(recipy_image, 150):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"Image size must be less than 150Kb")
 
-    file_path = os.path.dirname(__file__) + "/../../images/recipes/" + str(recipy_id) + "." + recipy_image.content_type.split("/")[-1]
-    with open(file_path, 'wb') as f:
-        f.write(recipy_image.file.read())
-    
+    image_helper.save_image(recipy_image, str(recipy_id), "recipes")
+    recipy.image_filename = str(recipy_id) + "." + recipy_image.content_type.split("/")[-1]
+    await session.commit()
+
 
 async def get_recipy_image(recipy_id: int, session: AsyncSession):
     query = select(Recipy).where(Recipy.id==recipy_id).exists()
     if not await session.scalar(select(query)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Recipy with id {recipy_id} wasn't found!")
-    file_path_default = os.path.dirname(__file__) + "/../../images/recipes/default.png"
-    file_path_jpeg = os.path.dirname(__file__) + "/../../images/recipes/" + str(recipy_id) + ".jpeg"
-    file_path_png = os.path.dirname(__file__) + "/../../images/recipes/" + str(recipy_id) + ".png"
-    if os.path.exists(file_path_jpeg):
-        return FileResponse(file_path_jpeg)
-    if os.path.exists(file_path_png):
-        return FileResponse(file_path_png)
     
-    return FileResponse(file_path_default)
+    return FileResponse(image_helper.get_image_filepath(str(recipy_id), "recipes"))

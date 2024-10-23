@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from .schemas import ArticleBase
 from core.models import Article
+from dependencies.images import image_helper
 
 import pathlib
 import os
@@ -29,8 +30,5 @@ async def get_article_image(article_id: int, session: AsyncSession):
     query = select(Article).where(Article.id==article_id).exists()
     if not await session.scalar(select(query)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Article with id {article_id} wasn't found!")
-    file_path = os.path.dirname(__file__) + "/../../images/articles/" + str(article_id) + ".jpeg"
-    if not os.path.exists(file_path):
-        file_path = os.path.dirname(__file__) + "/../../images/articles/default.jpg"
-    
-    return FileResponse(file_path)
+
+    return FileResponse(image_helper.get_image_filepath(str(article_id), "articles"))

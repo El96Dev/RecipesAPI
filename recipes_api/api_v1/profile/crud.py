@@ -1,4 +1,5 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, status, UploadFile
+from fastapi.responses import FileResponse
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload, joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -7,6 +8,7 @@ from core.models.recipy import Recipy, Category
 from core.models.user import User
 from core.models.like import Like
 from core.models.following import Following
+from dependencies.images import image_helper
 
 
 async def get_user_likes(session: AsyncSession, user_id: int):
@@ -81,3 +83,25 @@ async def get_user_followers(session: AsyncSession, user_id: int):
     result = await session.execute(stmt)
     user = result.scalars().one_or_none()
     return user.followers
+
+
+async def get_user_avatar(user_id: int, session: AsyncSession):
+    stmt = select(User).where(User.id==user_id)
+    result = await session.execute(stmt)
+    user = result.scalars().one_or_none()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id {user_id} wasn't found!")
+    
+    return(FileResponse(image_helper.get_image_filepath(str(user_id), "users")))
+
+
+async def set_user_avatar(user: User, avatar: UploadFile, session: AsyncSession):
+    if avatar.content_type not in ["image/jpeg", "image/png"]:
+        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail="Image must be in jpeg or png format!")
+    
+    if not image_helper.check_image_size(avatar, 150):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"Image size must be less than 150Kb")
+
+    image_helper.save_image(avatar, str(user.id), "recipes")
+    User.avatar_filename = str(user.id) + "." + avatar.content_type.split("/")[-1]
+    await session.commit()

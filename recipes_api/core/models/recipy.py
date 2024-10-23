@@ -21,6 +21,7 @@ class Cuisine(Base, IdPkMixin):
 class Recipy(Base, IdPkMixin):
     __tablename__ = "recipes"
     name: Mapped[str] 
+    image_filename: Mapped[str] = mapped_column(insert_default="default.jpg")
     author: Mapped[str] = mapped_column(ForeignKey("users.email"))
     text: Mapped[str]
     cuisine: Mapped[str] = mapped_column(ForeignKey("cuisines.name"))

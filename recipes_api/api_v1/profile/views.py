@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException, status, Depends, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 from . import crud 
 from .schemas import Follower, Following
@@ -36,6 +36,17 @@ async def get_my_followers(user: User = Depends(current_active_user),
     return await crud.get_user_followers(session, user.id)
 
 
+@router.get("/me/avatar")
+async def get_my_avatar(user: User = Depends(current_active_user),
+                        session: AsyncSession = Depends(db_helper.scoped_session_dependency)):
+    return await crud.get_user_avatar(user.id, session)
+
+
+@router.post("/me/avatar", status_code=status.HTTP_201_CREATED)
+async def set_my_avatar(avatar_image: UploadFile,
+                        user: User = Depends(current_active_user),
+                        session: AsyncSession = Depends(db_helper.scoped_session_dependency)):
+    await crud.set_user_avatar(user, avatar_image, session)
 
 
 # Other users
