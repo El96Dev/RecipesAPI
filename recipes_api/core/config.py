@@ -1,6 +1,7 @@
 from pathlib import Path
 from pydantic import BaseModel, PostgresDsn
 from pydantic_settings import BaseSettings
+import os
 
 BASE_DIR = Path(__file__).parent
 
@@ -12,11 +13,11 @@ class AccessToken(BaseModel):
 
 
 class DatabaseSettings(BaseModel):
-    user: str = "postgres"
-    password: str = "postgres"
-    db: str = "recipes"
-    host: str = "localhost"
-    port: str = "5432"
+    user: str = os.getenv('DB_USER')
+    password: str = os.getenv('DB_PASSWORD')
+    db: str = os.getenv('DB_NAME')
+    host: str = os.getenv('DB_HOST')
+    port: str = os.getenv('DB_PORT')
     echo: bool = True
 
     @property
