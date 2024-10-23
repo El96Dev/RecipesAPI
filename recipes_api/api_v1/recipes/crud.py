@@ -1,4 +1,6 @@
-from fastapi import HTTPException
+import os
+from fastapi import HTTPException, UploadFile, status
+from fastapi.responses import FileResponse
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload, joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -132,3 +134,40 @@ async def get_recipy_likes(recipy_id: int, session: AsyncSession):
     likes = result.scalars().all()
     return likes
 
+
+async def set_recipy_image(recipy_id: int, recipy_image: UploadFile, user: User, session: AsyncSession):
+    stmt = select(Recipy).where(Recipy.id==recipy_id)
+    result = await session.execute(stmt)
+    recipy = result.scalars().one_or_none()
+    if not recipy:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Recipy with id {recipy_id} wasn't found!")
+    if recipy_image.content_type not in ["image/jpeg", "image/png"]:
+        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail="Image must be in jpeg or png format!")
+    
+    if recipy.author != user.email:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only author can set recipy image!")
+
+    recipy_image.file.seek(0, 2)  
+    file_size_bytes = recipy_image.file.tell() 
+    recipy_image.file.seek(0)
+    if file_size_bytes/(1024) > 150:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"Image size must be less than 150Kb")
+
+    file_path = os.path.dirname(__file__) + "/../../images/recipes/" + str(recipy_id) + "." + recipy_image.content_type.split("/")[-1]
+    with open(file_path, 'wb') as f:
+        f.write(recipy_image.file.read())
+    
+
+async def get_recipy_image(recipy_id: int, session: AsyncSession):
+    query = select(Recipy).where(Recipy.id==recipy_id).exists()
+    if not await session.scalar(select(query)):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Recipy with id {recipy_id} wasn't found!")
+    file_path_default = os.path.dirname(__file__) + "/../../images/recipes/default.png"
+    file_path_jpeg = os.path.dirname(__file__) + "/../../images/recipes/" + str(recipy_id) + ".jpeg"
+    file_path_png = os.path.dirname(__file__) + "/../../images/recipes/" + str(recipy_id) + ".png"
+    if os.path.exists(file_path_jpeg):
+        return FileResponse(file_path_jpeg)
+    if os.path.exists(file_path_png):
+        return FileResponse(file_path_png)
+    
+    return FileResponse(file_path_default)

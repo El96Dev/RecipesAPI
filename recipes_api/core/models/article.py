@@ -12,4 +12,4 @@ class Article(Base, IdPkMixin):
     title: Mapped[str] = mapped_column(String(30))
     text: Mapped[str] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
-    image_path: Mapped[str]
+    image_path: Mapped[str] = mapped_column(insert_default="default.jpg")

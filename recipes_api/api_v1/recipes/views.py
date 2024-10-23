@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException, status, Depends, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 from . import crud 
 from .schemas import Recipy, RecipyCreate, RecipyUpdate, RecipyUpdatePartial, Cuisine, Category, Like
@@ -111,3 +111,14 @@ async def delete_like(recipy_id: int,
     return await crud.remove_like(session=session, like=like)
 
 
+@router.get("/{recipy_id}/image")
+async def get_recipy_image(recipy_id: int, session: AsyncSession = Depends(db_helper.scoped_session_dependency)):
+    return await crud.get_recipy_image(recipy_id, session)
+
+
+@router.post("/{recipy_id}/image")
+async def set_recipy_image(recipy_id: int,
+                           recipy_image: UploadFile,
+                           user: User = Depends(current_active_user),
+                           session: AsyncSession = Depends(db_helper.scoped_session_dependency)):
+    await crud.set_recipy_image(recipy_id, recipy_image, user, session)
