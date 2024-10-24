@@ -1,6 +1,9 @@
 import uvicorn
 from contextlib import asynccontextmanager
 from core.models import Base, db_helper
+from redis import asyncio as aioredis
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from core.config import settings
@@ -9,6 +12,8 @@ from api_v1 import router as router_v1
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    redis = aioredis.from_url("redis://localhost")
+    FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")
     yield
 
 

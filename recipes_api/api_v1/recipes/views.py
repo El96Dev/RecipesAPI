@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, status, Depends, UploadFile
+from fastapi_cache.decorator import cache 
 from sqlalchemy.ext.asyncio import AsyncSession
 from . import crud 
 from .schemas import Recipy, RecipyCreate, RecipyUpdate, RecipyUpdatePartial, Cuisine, Category, Like
@@ -11,23 +12,27 @@ from dependencies.authentication.fastapi_users import current_active_user
 router = APIRouter(tags=["Recipes"])
 
 @router.get("", response_model=list[Recipy])
+@cache(expire=(60*30))
 async def get_recipes(session: AsyncSession = Depends(db_helper.scoped_session_dependency)):
     return await crud.get_recipes(session=session)
 
 
 @router.get("/categories")
+@cache(expire=(60*60*3))
 async def get_categories(session: AsyncSession = Depends(db_helper.scoped_session_dependency)):
     categories = await crud.get_categories(session)
     return categories
 
 
 @router.get("/cuisines", response_model=list[Cuisine])
+@cache(expire=(60*60*3))
 async def get_cuisines(session: AsyncSession = Depends(db_helper.scoped_session_dependency)):
     cuisines = await crud.get_cuisines(session)
     return cuisines
 
 
 @router.get("/{recipy_id}", response_model=Recipy)
+@cache(expire=(60*5))
 async def get_recipy(recipy: Recipy = Depends(recipy_by_id)):
     return recipy 
 
