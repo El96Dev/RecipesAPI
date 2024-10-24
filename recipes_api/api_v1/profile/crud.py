@@ -102,6 +102,6 @@ async def set_user_avatar(user: User, avatar: UploadFile, session: AsyncSession)
     if not image_helper.check_image_size(avatar, 150):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"Image size must be less than 150Kb")
 
-    image_helper.save_image(avatar, str(user.id), "recipes")
+    image_helper.save_image(avatar, str(user.id), "users")
     User.avatar_filename = str(user.id) + "." + avatar.content_type.split("/")[-1]
     await session.commit()
