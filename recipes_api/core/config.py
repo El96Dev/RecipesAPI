@@ -22,6 +22,7 @@ class DatabaseSettings(BaseModel):
 
     @property
     def url(self):
+        # return "postgresql+asyncpg://postgres:postgres@localhost:5432/recipes"
         return "postgresql+asyncpg://" + self.user + ":" + self.password + "@" + \
                 self.host + ":" + self.port + "/" + self.db
 
@@ -29,13 +30,8 @@ class DatabaseSettings(BaseModel):
 
 class Settings(BaseSettings):
     api_v1_prefix: str = "/api/v1"
-
     origins: list[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
-
     db_settings: DatabaseSettings = DatabaseSettings()
-
-    # db_url: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/recipes"
-    # db_echo: bool = True
     access_token: AccessToken = AccessToken()
 
 

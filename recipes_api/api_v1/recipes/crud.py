@@ -2,7 +2,8 @@ import os
 from fastapi import HTTPException, UploadFile, status
 from fastapi.responses import FileResponse
 from sqlalchemy import select
-from sqlalchemy.orm import selectinload, joinedload
+from sqlalchemy.orm import selectinload, joinedload, load_only
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.engine import result
 from core.models.recipy import Recipy, Category, Cuisine
@@ -13,10 +14,10 @@ from dependencies.images import image_helper
 
 
 async def get_recipes(session: AsyncSession):
-    stmt = select(Recipy).order_by(Recipy.id)
+    stmt = select(Recipy).options(joinedload(Recipy.author)).order_by(Recipy.id)
     result = await session.execute(stmt)
     recipes = result.scalars().all()
-    return list(recipes)
+    return recipes
 
 
 async def get_recipes_by_category(session: AsyncSession, category_name: str):
@@ -29,22 +30,20 @@ async def get_recipes_by_category(session: AsyncSession, category_name: str):
     return list(recipes)
 
 
-async def get_recipy_by_name_and_author(session: AsyncSession, recipy_name: str, author: str):
-    stmt = select(Recipy).where(Recipy.name == recipy_name, Recipy.author == author)
-    result = await session.execute(stmt)
-    recipy = result.scalars().all()
-    return recipy
-
-
 async def get_category(session: AsyncSession, category_name: str):
-    stmt = select(Category).where(Category.name == category_name)
+    stmt = select(Category).where(Category.name==category_name)
     result = await session.execute(stmt)
     category = result.scalars().all()
     return category
 
 
 async def get_recipy(session: AsyncSession, recipy_id: int):
-    return await session.get(Recipy, recipy_id)
+    stmt = select(Recipy).where(Recipy.id==recipy_id).options(joinedload(Recipy.author))
+    result = await session.execute(stmt)
+    recipy = result.scalars().one_or_none()
+    if not recipy:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Can't find recipy with id {recipy_id}")
+    return recipy
 
 
 async def get_categories(session: AsyncSession):
@@ -61,20 +60,24 @@ async def get_cuisines(session: AsyncSession):
     return list(cuisines)
 
 
-async def create_recipy(session: AsyncSession, recipy_in: RecipyCreate, author: str):
-    recipy = Recipy(**recipy_in.model_dump(), author=author)
-    session.add(recipy)
-    await session.commit()
+async def create_recipy(session: AsyncSession, recipy_in: RecipyCreate, author_id: int):
+    recipy = Recipy(**recipy_in.model_dump(), author_id=author_id)
+    try:
+        session.add(recipy)
+        await session.commit()
+    except IntegrityError as e:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"You've already created recipy named {recipy_in.name}")
+
     return recipy
 
 
 async def update_recipy(session: AsyncSession, recipy: Recipy, 
-                        recipy_update: RecipyUpdate | RecipyUpdatePartial, author: str,
+                        recipy_update: RecipyUpdate | RecipyUpdatePartial, author_id: int,
                         partial: bool = False):
     db_recipy = await session.get(Recipy, recipy.id)
     if not db_recipy:
         raise HTTPException(status_code=404, detail=f"Recipy {recipy.name} doesn't exist!")
-    elif db_recipy.author != author:
+    elif db_recipy.author_id != author_id:
         raise HTTPException(status_code=403, detail="Only author can update recipy!")
     if not await check_category_exists(session, recipy_update.category):
         raise HTTPException(status_code=404, detail=f"Category {recipy_update.category} doesn't exist!")
@@ -130,10 +133,13 @@ async def get_like(session: AsyncSession, user_id: int, recipy_id: int):
 
 
 async def get_recipy_likes(recipy_id: int, session: AsyncSession):
-    stmt = select(Recipy).where(Recipy.id==recipy_id).options(joinedload(Recipy.likes)).load_only(Recipy.name)
+    stmt = select(Recipy).options(joinedload(Recipy.likes)).where(Recipy.id==recipy_id)
     result = await session.execute(stmt)
-    likes = result.scalars().all()
-    return likes
+    recipy = result.unique().scalars().one_or_none()
+    if not recipy:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Recipy with id {recipy_id} wasn't found!")
+    print(recipy.likes)
+    return list(recipy.likes)
 
 
 async def set_recipy_image(recipy_id: int, recipy_image: UploadFile, user: User, session: AsyncSession):
@@ -145,7 +151,7 @@ async def set_recipy_image(recipy_id: int, recipy_image: UploadFile, user: User,
     if recipy_image.content_type not in ["image/jpeg", "image/png"]:
         raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail="Image must be in jpeg or png format!")
     
-    if recipy.author != user.email:
+    if recipy.author != user.username:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only author can set recipy image!")
 
     if not image_helper.check_image_size(recipy_image, 150):

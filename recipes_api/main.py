@@ -2,9 +2,10 @@ import uvicorn
 from contextlib import asynccontextmanager
 from core.models import Base, db_helper
 from redis import asyncio as aioredis
+from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from core.config import settings
 from api_v1 import router as router_v1

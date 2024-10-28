@@ -12,7 +12,7 @@ from dependencies.authentication.fastapi_users import current_active_user
 router = APIRouter(tags=["Recipes"])
 
 @router.get("", response_model=list[Recipy])
-@cache(expire=(60*30))
+@cache(expire=(60*5))
 async def get_recipes(session: AsyncSession = Depends(db_helper.scoped_session_dependency)):
     return await crud.get_recipes(session=session)
 
@@ -33,21 +33,19 @@ async def get_cuisines(session: AsyncSession = Depends(db_helper.scoped_session_
 
 @router.get("/{recipy_id}", response_model=Recipy)
 @cache(expire=(60*5))
-async def get_recipy(recipy: Recipy = Depends(recipy_by_id)):
-    return recipy 
+async def get_recipy(recipy_id: int, session: AsyncSession = Depends(db_helper.scoped_session_dependency)):
+    return await crud.get_recipy(session, recipy_id)
 
 
-@router.post("", response_model=Recipy, status_code=status.HTTP_201_CREATED)
+@router.post("", status_code=status.HTTP_201_CREATED)
 async def create_recipy(recipy_in: RecipyCreate, session: AsyncSession = Depends(db_helper.scoped_session_dependency),
                         user: User = Depends(current_active_user)):
     if not await crud.check_cuisine_exists(session, recipy_in.cuisine):
         raise HTTPException(status_code=422, detail=f"Cuisine {recipy_in.cuisine} doesn't exist!")
     if not await crud.check_category_exists(session, recipy_in.category):
         raise HTTPException(status_code=422, detail=f"Category {recipy_in.category} doesn't exist!")
-    if await crud.get_recipy_by_name_and_author(session=session, recipy_name=recipy_in.name, author=user.email):
-        raise HTTPException(status_code=403, detail=f"Recipy {recipy_in.name} already exists!")
     else:
-        return await crud.create_recipy(session=session, recipy_in=recipy_in, author = user.email)
+        return await crud.create_recipy(session=session, recipy_in=recipy_in, author_id = user.id)
 
 
 @router.put("/{recipy_id}", response_model=Recipy)
@@ -61,7 +59,7 @@ async def update_recipy(
         session=session,
         recipy=recipy,
         recipy_update=recipy_update,
-        author=user.email
+        author_id=user.id
     )
 
 
@@ -76,7 +74,7 @@ async def update_recipy_partial(
         session=session,
         recipy=recipy,
         recipy_update=recipy_update,
-        author=user.email,
+        author_id=user.id,
         partial=True
     )
 
@@ -85,7 +83,7 @@ async def update_recipy_partial(
 async def delete_recipy(recipy_id: int, 
                         session: AsyncSession = Depends(db_helper.scoped_session_dependency),
                         user: User = Depends(current_active_user)):
-    recipy = await get_recipy_if_user_is_author(recipy_id=recipy_id, author=user.email, session=session)
+    recipy = await get_recipy_if_user_is_author(recipy_id=recipy_id, author_id=user.id, session=session)
     await crud.delete_recipy(session=session, recipy=recipy)
 
 

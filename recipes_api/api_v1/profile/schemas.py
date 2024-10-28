@@ -2,8 +2,10 @@ from pydantic import BaseModel
 
 
 class Follower(BaseModel):
-    email: str
+    id: int
+    username: str
 
 
 class Following(BaseModel):
-    email: str
+    id: int
+    username: str

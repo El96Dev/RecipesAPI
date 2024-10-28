@@ -1,5 +1,10 @@
+from datetime import datetime
 from pydantic import BaseModel, ConfigDict
 
+
+class User(BaseModel):
+    id: int 
+    username: str
 
 
 class RecipyBase(BaseModel):
@@ -20,9 +25,8 @@ class Category(BaseModel):
 
 
 class Recipy(RecipyBase):
-    model_config = ConfigDict(from_attributes=True)
     id: int
-    author: str
+    author: User
 
 
 class RecipyCreate(RecipyBase):
@@ -41,5 +45,4 @@ class RecipyUpdatePartial(RecipyBase):
 
 class Like(BaseModel):
     id: int
-    user_id: int
-    recipy_id: int
+    username: str
