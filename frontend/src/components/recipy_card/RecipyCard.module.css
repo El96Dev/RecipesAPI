@@ -1,0 +1,53 @@
+.main__recipy {
+    width: 400px;
+    height: fit-content;
+    background-color: #8DA990;
+    border: 1px solid black;
+}
+
+.main__recipy_img {
+    width: 400px;
+    height: 400px;
+    object-fit: cover;
+}
+
+.main__recipy_preview {
+    width: 90%;
+    margin: 20px auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.main__recipy_title {
+    font-weight: bold;
+    font-size: 24px;
+}
+
+.main__recipy_description {
+    font-size: 18px;
+    margin-bottom: 15px;
+    -webkit-box-orient: vertical;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+}
+
+.main__recipy_likes_wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    /* max-width: 50px; */
+    align-self: flex-end;
+}
+
+.main__recipy_likes_value {
+    margin-left: 7px;
+    font-size: 18px;
+}
+
+.main__recipy_like_svg:hover {
+    fill:#036500;
+}

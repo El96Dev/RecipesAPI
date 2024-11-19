@@ -1,0 +1,37 @@
+body {
+    margin: 0;
+}
+
+html {
+    margin: 0;
+}
+
+
+
+
+
+.login__wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 70px;
+    align-items: center;
+    justify-content: center;
+}
+
+.login__wrapper:hover * {
+    color: #b2b2b2;
+    fill: #b2b2b2;
+    text-shadow: 1px 1px 25px #000000;
+}
+
+.login__ref {
+    margin-left: 10px;
+    color: #EAEFF5;
+    font-size: 18px;
+    letter-spacing: 4px;
+    text-decoration: none;
+}
+
+.login__svg {
+    width: 40px;
+}

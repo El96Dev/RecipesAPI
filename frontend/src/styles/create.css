@@ -1,0 +1,144 @@
+.create_recipy_wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 55%;
+    margin: 0 auto;
+    padding: 30px 70px;
+    padding-bottom: 70px;
+    background-color:#8DA990;
+}
+
+.create_recipy_title {
+    font-size: 32px;
+    text-decoration: underline;
+}
+
+.create_recipy_label {
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+.create_recipy_title_input {
+    width: 100%;
+    font-size: 18px;
+    border-radius: 5px;
+    border: 1px solid black;
+    background: #c9d4ca;
+}
+
+.create_recipy_description_input, .step_input {
+    font-size: 18px;
+    width: 100%;
+    resize: none;
+    border-radius: 5px;
+    border: 1px solid black;
+    background: #c9d4ca;
+}
+
+.step_input {
+    height: 180px;
+    background: #EAEFF5;
+}
+
+.create_recipy_ingredients_inputs {
+    border-radius: 5px;
+    border: 1px solid black;
+    background: #c9d4ca;
+    padding: 10px 20px;
+}
+
+.create_recipy_ingredient_label, .create_recipy_step_label {
+    font-size: 20px;
+}
+
+.ingredient_name_input, .ingredient_amount_input {
+    font-size: 18px;
+    border-radius: 5px;
+    border: 1px solid black;
+}
+
+.ingredient_add_button, .step_add_button {
+    font-size: 18px;
+    width: 100px;
+    border-radius: 5px;
+    background-color: #2E4936;
+    color: #EAEFF5;
+    border: 1px solid black;
+    margin-left: 5px;
+}
+
+.step_add_button {
+    align-self: flex-end;
+    margin-top: 10px;
+}
+
+.ingredient_add_button:hover, .step_add_button:hover {
+    background-color: #619c73;
+    color: black;
+}
+
+.ingredient_wrapper {
+    font-size: 18px;
+    padding: 5px 10px;
+    background-color: #2E4936;
+    color: #EAEFF5;
+    border: 1px solid black;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ingredient_text_wrapper {
+    margin-left: 20px;
+}
+
+.ingredient_amount {
+    margin-left: 10px;
+}
+
+.create_recipy_steps_inputs {
+    font-size: 18px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+    border: 1px solid black;
+    background: #c9d4ca;
+    padding: 10px 20px;
+}
+
+.step_wrapper {
+    font-size: 18px;
+    padding: 15px 20px;
+    background-color: #2E4936;
+    color: #EAEFF5;
+    border: 1px solid black;
+    display: flex;
+    flex-direction: column;
+}
+
+.step_remove_svg {
+    align-self: flex-end;
+    margin-bottom: 10px;
+    margin-right: 10px;
+}
+
+.step_remove_svg:hover, .ingredient_remove_svg:hover {
+    fill: #b2b2b2;
+}
+
+.create_recipy_button {
+    width: 200px;
+    height: 40px;
+    font-size: 20px;
+    align-self: flex-end;
+    margin-top: 30px;
+    border: 1px solid black;
+    border-radius: 5px;
+    background-color: #2E4936;
+    color:#EAEFF5;
+}
+
+.create_recipy_button:hover {
+    background-color: #619c73;
+    color: black;
+}

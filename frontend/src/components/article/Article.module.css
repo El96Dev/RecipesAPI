@@ -1,0 +1,27 @@
+.article_wrapper {
+    width: 80%;
+    background-color: hsl(126, 14%, 61%);
+    padding: 10px 40px;
+    margin: 0 auto;
+}
+
+.article_title {
+    font-size: 24px;
+    text-decoration: underline;
+}
+
+.article_text {
+    font-size: 20px;
+}
+
+.article_inner_wrapper {
+    margin-left: 10px;
+}
+
+.article_image {
+    float: left;
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    margin-right: 20px;
+}

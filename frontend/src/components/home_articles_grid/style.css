@@ -1,0 +1,11 @@
+.home_article_grid {
+    width: 65%;
+    margin: 0 auto;
+    padding-bottom: 50px;
+}
+
+.home_articles_title {
+    color: black;
+    font-size: 28px;
+    text-decoration: underline;
+}
