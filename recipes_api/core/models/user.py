@@ -19,10 +19,6 @@ class User(Base, SQLAlchemyBaseUserTable[UserIdType]):
     articles: Mapped[List["Article"]] = relationship(back_populates="author")
     recipes: Mapped[List["Recipy"]] = relationship(back_populates="author")
     likes: Mapped[list["Recipy"]] = relationship("Recipy", secondary="likes", back_populates="likes", uselist=True)
-    following = relationship("User", secondary="followings", 
-                             primaryjoin=("followings.c.user_id==User.id"),
-                             secondaryjoin=("followings.c.following_id==User.id"))
-
     followers = relationship("User", secondary="followings", 
                              primaryjoin=("followings.c.following_id==User.id"),
                              secondaryjoin=("followings.c.user_id==User.id"))
