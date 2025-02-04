@@ -9,34 +9,32 @@ services:
       - "8000:8000"
     command: >
       sh -c "alembic upgrade head
-             python3 main.py"
+             pytest -s"
     environment:
-      - DB_USER=postgres
-      - DB_PASSWORD=postgres
-      - DB_NAME=recipes
-      - DB_HOST=pgdb
+      - DB_USER=postgres_test
+      - DB_PASSWORD=postgres_test
+      - DB_NAME=recipes_test
+      - DB_HOST=test_pgdb
       - DB_PORT=5432
       - REDIS_URL=redis://redis:6379/0
     depends_on:
-      pgdb:
+      test_pgdb:
         condition: service_healthy
       redis:
         condition: service_healthy
 
-  pgdb:
+  test_pgdb:
     image: postgres
     environment:
-      - POSTGRES_DB=recipes
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=recipes_test
+      - POSTGRES_USER=postgres_test
+      - POSTGRES_PASSWORD=postgres_test
       - POSTGRES_PORT=5432
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d recipes"]
+      test: ["CMD-SHELL", "pg_isready -U postgres_test -d recipes_test"]
       interval: 2s
       timeout: 2s
       retries: 10
-    volumes:
-      - pgdata:/var/lib/postgresql/data
 
   redis:
     image: "redis:latest"
@@ -49,6 +47,3 @@ services:
     ports:
       - "6380:6379"
 
-
-volumes:
-  pgdata:
