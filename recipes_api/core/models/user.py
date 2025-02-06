@@ -12,7 +12,6 @@ if TYPE_CHECKING:
 
 
 class User(Base, SQLAlchemyBaseUserTable[UserIdType]):
-
     id: Mapped[UserIdType] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(String(30), unique=True)
     avatar_filename: Mapped[str] = mapped_column(insert_default="default.jpg")
@@ -22,6 +21,7 @@ class User(Base, SQLAlchemyBaseUserTable[UserIdType]):
     followers = relationship("User", secondary="followings", 
                              primaryjoin=("followings.c.following_id==User.id"),
                              secondaryjoin=("followings.c.user_id==User.id"))
+    is_admin: Mapped[bool] = mapped_column(default=False, nullable=False)
 
 
     @classmethod
