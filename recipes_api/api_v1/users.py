@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from dependencies.authentication.fastapi_users import fastapi_users
+from dependencies.authentication.current_user import fastapi_users
 from core.schemas.user import UserRead, UserUpdate
 
 

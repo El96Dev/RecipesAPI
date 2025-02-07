@@ -6,7 +6,7 @@ from .schemas import Recipy, RecipyCreate, RecipyUpdate, RecipyUpdatePartial, Cu
 from .dependencies import recipy_by_id, get_recipy_if_user_is_author
 from core.models import db_helper
 from core.models import User
-from dependencies.authentication.fastapi_users import current_active_user
+from dependencies.authentication.current_user import current_active_user
 
 
 router = APIRouter(tags=["Recipes"])

@@ -4,7 +4,7 @@ services:
   fastapi:
     build: .
     volumes: 
-      - ./recipes_api:/recipes/
+      - ./recipes_api:/recipes_api/
     ports:
       - "8000:8000"
     command: >

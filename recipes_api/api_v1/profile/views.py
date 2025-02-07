@@ -5,7 +5,7 @@ from . import crud
 from .schemas import Follower, Following
 from core.models import db_helper
 from core.models import User
-from dependencies.authentication.fastapi_users import current_active_user
+from dependencies.authentication.current_user import current_active_user
 
 
 router = APIRouter(tags=["Profile"])
