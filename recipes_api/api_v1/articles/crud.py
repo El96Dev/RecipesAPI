@@ -2,12 +2,10 @@ from fastapi import HTTPException, status, UploadFile
 from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+
 from .schemas import ArticleBase
 from core.models import Article
 from dependencies.images import image_helper
-
-import pathlib
-import os
 
 
 async def get_articles(session: AsyncSession):
