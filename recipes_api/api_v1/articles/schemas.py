@@ -9,6 +9,11 @@ class ArticleBase(BaseModel):
     text: str
 
 
+class ArticleUpdate(BaseModel):
+    title: str | None
+    text: str | None
+
+
 class ArticleGet(ArticleBase):
     id: int
     image_filename: str

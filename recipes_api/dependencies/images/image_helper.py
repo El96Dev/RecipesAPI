@@ -10,7 +10,6 @@ def check_image_size(image: UploadFile, kb_size_limit: int):
 
 
 def get_image_filepath(image_name: str, image_type: str):
-    print(os.path.dirname(__file__))
     file_path_jpeg = os.path.dirname(__file__) + "/../../images/" + image_type + "/" + image_name + ".jpeg"
     file_path_png = os.path.dirname(__file__) + "/../../images/" + image_type + "/" + image_name + ".png"
     file_path_default = os.path.dirname(__file__) + "/../../images/" + image_type + "/default.jpg"
@@ -26,3 +25,11 @@ def save_image(image: UploadFile, image_name: str, image_type: str):
     file_path = os.path.dirname(__file__) + "/../../images/" + image_type + "/" + image_name + "." + image.content_type.split("/")[-1]
     with open(file_path, 'wb') as f:
         f.write(image.file.read())
+
+    
+def delete_image(image_filename: str, image_type: str) -> None:
+    file_path = os.path.dirname(__file__) + "/../../images/" + image_type + "/" + image_filename
+    if os.path.exists(file_path):
+        os.remove(file_path)
+
+    
