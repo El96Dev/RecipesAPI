@@ -1,7 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel, ValidationError, validator
-from fastapi import UploadFile
+from pydantic import BaseModel
 
 
 class ArticleBase(BaseModel):
@@ -19,6 +18,10 @@ class ArticleGet(ArticleBase):
     image_filename: str
     created_at: datetime
     views_count: int
+
+    @property
+    def views_count(self) -> int:
+        return len(self.views)
 
     class Config:
         orm_mode = True
