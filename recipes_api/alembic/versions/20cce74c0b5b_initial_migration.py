@@ -1,19 +1,18 @@
-"""Initial migrationc
+"""Initial migration
 
-Revision ID: 579a7af6416b
+Revision ID: 20cce74c0b5b
 Revises: 
-Create Date: 2025-02-14 12:41:12.965587
+Create Date: 2025-02-21 06:52:33.433361
 
 """
 from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
-import fastapi_users_db_sqlalchemy
 
 
 # revision identifiers, used by Alembic.
-revision: str = '579a7af6416b'
+revision: str = '20cce74c0b5b'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -113,10 +112,10 @@ def upgrade() -> None:
     sa.Column('message', sa.Text(), nullable=False),
     sa.Column('author_id', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
-    sa.Column('forum_id', sa.Integer(), nullable=False),
+    sa.Column('thread_id', sa.Integer(), nullable=False),
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.ForeignKeyConstraint(['author_id'], ['users.id'], ),
-    sa.ForeignKeyConstraint(['forum_id'], ['forum_threads.id'], ),
+    sa.ForeignKeyConstraint(['thread_id'], ['forum_threads.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('likes',

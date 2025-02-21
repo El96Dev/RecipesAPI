@@ -15,7 +15,7 @@ class ForumThread(Base, IdPkMixin):
     __tablename__ = "forum_threads"
 
     title: Mapped[str] = mapped_column(String(50))
-    messages: Mapped[List["ForumMessage"]] = relationship("ForumMessage", back_populates="forum")
+    messages: Mapped[List["ForumMessage"]] = relationship("ForumMessage", back_populates="thread")
     author_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     author: Mapped["User"] = relationship("User")
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
