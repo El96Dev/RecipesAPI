@@ -1,12 +1,11 @@
-from fastapi import APIRouter, HTTPException, status, Depends, UploadFile
+from core.models import User, db_helper
+from dependencies.authentication.current_user import current_active_user
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, status
 from fastapi_cache.decorator import cache
 from sqlalchemy.ext.asyncio import AsyncSession
-from . import crud 
-from .schemas import Follower, Following
-from core.models import db_helper
-from core.models import User
-from dependencies.authentication.current_user import current_active_user
 
+from . import crud
+from .schemas import Follower, Following
 
 router = APIRouter(tags=["Profile"])
 

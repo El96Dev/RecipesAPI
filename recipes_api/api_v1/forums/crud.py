@@ -1,12 +1,12 @@
 from datetime import datetime
 
-from fastapi.exceptions import HTTPException
+from core.models import ForumMessage, ForumThread, User, db_helper
 from fastapi import status
+from fastapi.exceptions import HTTPException
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select 
 
 from .schemas import ForumThreadBase
-from core.models import db_helper, ForumThread, ForumMessage, User
 
 
 async def get_approved_forum_threads(skip: int, limit: int, session: AsyncSession) -> list[ForumThread]:

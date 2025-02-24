@@ -1,0 +1,5 @@
+[flake8]
+exclude = 
+    venv/
+    recipes_api/migrations/, 
+    recipes_api/alembic/versions/

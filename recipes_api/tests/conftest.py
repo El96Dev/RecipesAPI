@@ -1,22 +1,22 @@
+import asyncio
 import os
+from contextlib import asynccontextmanager
 from unittest.mock import AsyncMock, MagicMock
 
-import asyncio
 import pytest
 import pytest_asyncio
+from core.config import settings
+from core.models import DatabaseHelper, db_helper
 from fastapi import FastAPI
-from contextlib import asynccontextmanager
-from httpx import ASGITransport, AsyncClient
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
+from httpx import ASGITransport, AsyncClient
 from redis import asyncio as aioredis
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
-from sqlalchemy.orm import sessionmaker
 from sqlalchemy import MetaData
-from sqlalchemy.schema import DropIndex, CreateIndex
-
-from core.models import DatabaseHelper, db_helper
-from core.config import settings
+from sqlalchemy.ext.asyncio import (AsyncSession, async_sessionmaker,
+                                    create_async_engine)
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.schema import CreateIndex, DropIndex
 
 
 @pytest.fixture(scope="session")

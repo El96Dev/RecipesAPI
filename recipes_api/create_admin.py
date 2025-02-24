@@ -1,6 +1,5 @@
-from fastapi_users.password import PasswordHelper
-
 from core.models import User, db_helper
+from fastapi_users.password import PasswordHelper
 
 
 async def create_admin_user(username: str, email: str, password: str):

@@ -1,14 +1,15 @@
 from datetime import datetime
-from typing import List, TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
-from sqlalchemy import String, Boolean, DateTime, ForeignKey
+from sqlalchemy import Boolean, DateTime, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
 from .id_mixin import IdPkMixin
+
 if TYPE_CHECKING:
-    from .user import User
     from .forum_message import ForumMessage
+    from .user import User
     
 
 class ForumThread(Base, IdPkMixin):

@@ -5,7 +5,6 @@ from .forums.views import router as forums_router
 from .recipes.views import router as recipes_router
 from .users.views import router as users_router
 
-
 router = APIRouter(tags=["Admin"])
 router.include_router(articles_router, prefix="/articles")
 router.include_router(forums_router, prefix="/forums")

@@ -1,7 +1,6 @@
 import pytest
-from fastapi import HTTPException, status
-
 from api_v1.articles import crud
+from fastapi import HTTPException, status
 
 
 @pytest.mark.asyncio()

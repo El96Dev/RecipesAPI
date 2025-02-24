@@ -1,6 +1,5 @@
-from fastapi_users import schemas
-
 from core.types.user_id import UserIdType
+from fastapi_users import schemas
 
 
 class UserRead(schemas.BaseUser[UserIdType]):

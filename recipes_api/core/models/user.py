@@ -1,14 +1,18 @@
-from sqlalchemy.orm import mapped_column, Mapped, relationship
-from sqlalchemy import String
-from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable, SQLAlchemyUserDatabase
 from typing import TYPE_CHECKING, List
-from .base import Base
+
 from core.types.user_id import UserIdType
+from fastapi_users_db_sqlalchemy import (SQLAlchemyBaseUserTable,
+                                         SQLAlchemyUserDatabase)
+from sqlalchemy import String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from .base import Base
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
-    from .recipy import Recipy
+
     from .article import Article
+    from .recipy import Recipy
 
 
 class User(Base, SQLAlchemyBaseUserTable[UserIdType]):

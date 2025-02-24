@@ -1,13 +1,12 @@
-import uuid
 import logging
-from typing import Optional, TYPE_CHECKING
-
-from fastapi_users import BaseUserManager, IntegerIDMixin
+import uuid
+from typing import TYPE_CHECKING, Optional
 
 from core.config import settings
-from core.models.user import User
 from core.models.db_helper import db_helper
+from core.models.user import User
 from core.types.user_id import UserIdType
+from fastapi_users import BaseUserManager, IntegerIDMixin
 
 if TYPE_CHECKING:
     from fastapi import Request

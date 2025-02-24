@@ -1,13 +1,12 @@
 from typing import List
 
+from core.models import User, db_helper
+from dependencies.authentication.current_user import current_active_user
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from . import crud
-from .schemas import ForumThreadBase, ForumThreadGet, ForumMessageBase
-from core.models import db_helper, User
-from dependencies.authentication.current_user import current_active_user
-
+from .schemas import ForumMessageBase, ForumThreadBase, ForumThreadGet
 
 router = APIRouter(tags=["Forums"])
 

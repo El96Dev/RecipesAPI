@@ -1,7 +1,8 @@
+import os
 from pathlib import Path
+
 from pydantic import BaseModel, PostgresDsn
 from pydantic_settings import BaseSettings
-import os
 
 BASE_DIR = Path(__file__).parent
 

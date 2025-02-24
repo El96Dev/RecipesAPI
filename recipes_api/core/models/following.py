@@ -1,5 +1,6 @@
-from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from .base import Base
 from .id_mixin import IdPkMixin
 

@@ -1,13 +1,12 @@
 from fastapi import APIRouter
 
-from .recipes.views import router as recipes_router
+from .admin import admin_router
 from .articles.views import router as articles_router
+from .auth import router as auth_router
 from .forums.views import router as forums_router
 from .profile.views import router as profile_router
-from .auth import router as auth_router
+from .recipes.views import router as recipes_router
 from .users import router as users_router
-from .admin import admin_router
-
 
 router = APIRouter()
 router.include_router(recipes_router, prefix="/recipes")
