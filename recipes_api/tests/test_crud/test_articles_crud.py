@@ -1,5 +1,5 @@
 import pytest
-from fastapi import HTTPException, status
+from fastapi import HTTPException
 
 from api_v1.articles import crud
 
@@ -17,6 +17,7 @@ async def test_get_nonexistent_article(async_db_session):
 
     assert exc_info.value.status_code == 404
     assert exc_info.value.detail == "Article with id 1 wasn't found!"
+
 
 @pytest.mark.asyncio()
 async def test_get_nonexistent_article_image(async_db_session):

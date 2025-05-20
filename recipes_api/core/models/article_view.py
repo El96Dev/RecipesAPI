@@ -17,4 +17,6 @@ class ArticleView(Base, IdPkMixin):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     article_id: Mapped[int] = mapped_column(ForeignKey("articles.id"))
     article: Mapped["Article"] = relationship(back_populates="views")
-    viewed_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    viewed_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow
+    )

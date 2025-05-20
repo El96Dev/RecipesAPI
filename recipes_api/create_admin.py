@@ -11,7 +11,7 @@ async def create_admin_user(username: str, email: str, password: str):
             username=username,
             email=email,
             hashed_password=hashed_password,
-            is_admin=True 
+            is_admin=True
         )
 
         session.add(admin_user)

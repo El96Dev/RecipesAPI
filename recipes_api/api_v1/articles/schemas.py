@@ -1,5 +1,4 @@
-from pydantic import BaseModel, ValidationError, validator
-from fastapi import UploadFile
+from pydantic import BaseModel
 
 
 class ArticleBase(BaseModel):

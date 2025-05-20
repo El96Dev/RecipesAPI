@@ -17,6 +17,10 @@ class ForumMessage(Base, IdPkMixin):
     message: Mapped[str] = mapped_column(Text)
     author_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     author: Mapped["User"] = relationship("User")
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow
+    )
     forum_id: Mapped[int] = mapped_column(ForeignKey("forum_threads.id"))
-    forum: Mapped["ForumThread"] = relationship("ForumThread", back_populates="messages")
+    forum: Mapped["ForumThread"] = relationship(
+        "ForumThread", back_populates="messages"
+    )

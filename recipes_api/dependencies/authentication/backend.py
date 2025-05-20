@@ -8,4 +8,3 @@ authentication_backend = AuthenticationBackend(
     transport=bearer_transport,
     get_strategy=get_database_strategy
 )
-
