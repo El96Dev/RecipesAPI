@@ -1,16 +1,15 @@
-from datetime import datetime
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel
 
 
 class User(BaseModel):
-    id: int 
+    id: int
     username: str
 
 
 class RecipyBase(BaseModel):
     name: str
     text: str
-    category: str 
+    category: str
     cuisine: str
 
 

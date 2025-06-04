@@ -33,4 +33,3 @@ async def test_register(client):
     response = await client.post("/api/v1/auth/register", json=user_data)
     print("Response JSON:", response.json())
     assert response.status_code == 201
-    

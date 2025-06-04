@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from dependencies.authentication.fastapi_users import fastapi_users
+from dependencies.authentication.current_user import fastapi_users
 from dependencies.authentication.backend import authentication_backend
 
 from core.schemas.user import UserRead, UserCreate
@@ -17,4 +17,3 @@ router.include_router(
 router.include_router(
     router=fastapi_users.get_register_router(UserRead, UserCreate)
 )
-

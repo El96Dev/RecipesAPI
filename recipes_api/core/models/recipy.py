@@ -20,13 +20,17 @@ class Cuisine(Base, IdPkMixin):
 
 class Recipy(Base, IdPkMixin):
     __tablename__ = "recipes"
-    name: Mapped[str] 
+    name: Mapped[str]
     image_filename: Mapped[str] = mapped_column(insert_default="default.jpg")
     author_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     author: Mapped["User"] = relationship(back_populates="recipes")
     text: Mapped[str]
     cuisine: Mapped[str] = mapped_column(ForeignKey("cuisines.name"))
     category: Mapped[str] = mapped_column(ForeignKey("categories.name"))
-    likes: Mapped[list["User"]] = relationship("User", secondary="likes", back_populates="likes", uselist=True)
+    likes: Mapped[list["User"]] = relationship(
+        "User", secondary="likes", back_populates="likes", uselist=True
+    )
 
-    __table_args__ = (UniqueConstraint('author_id', 'name', name='uq_author_name'),)
+    __table_args__ = (
+        UniqueConstraint('author_id', 'name', name='uq_author_name'),
+    )

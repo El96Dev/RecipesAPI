@@ -1,7 +1,5 @@
 import os
-from unittest.mock import AsyncMock, MagicMock
 
-import asyncio
 import pytest
 import pytest_asyncio
 from fastapi import FastAPI
@@ -10,12 +8,10 @@ from httpx import ASGITransport, AsyncClient
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 from redis import asyncio as aioredis
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy import MetaData
-from sqlalchemy.schema import DropIndex, CreateIndex
 
-from core.models import DatabaseHelper, db_helper
+from core.models import db_helper
 from core.config import settings
 
 
@@ -59,7 +55,9 @@ async def async_db_session(async_session_factory):
 @pytest_asyncio.fixture(scope="function")
 async def client(async_db_session):
     from main import app
-    app.dependency_overrides[db_helper.scoped_session_dependency] = lambda: async_db_session
+    app.dependency_overrides[db_helper.scoped_session_dependency] = (
+        lambda: async_db_session
+    )
     async with lifespan(app):
         async with AsyncClient(
             transport=ASGITransport(app=app), base_url="http://0.0.0.0:8000"
@@ -79,5 +77,3 @@ async def clear_database(async_db_session):
                 await conn.execute(table.delete())
 
         await conn.commit()
-
-
